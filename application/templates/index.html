@@ -1,0 +1,17 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MQTT Data</title>
+</head>
+<body>
+    <h1>MQTT Data</h1>
+    {% if data %}
+        {% for entry in data %}
+            <pre>{{ entry|tojson(indent=4) }}</pre>
+        {% endfor %}
+    {% else %}
+        <p>No data received yet.</p>
+    {% endif %}
+</body>
+</html>
