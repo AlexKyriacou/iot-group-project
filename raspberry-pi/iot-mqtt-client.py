@@ -4,19 +4,22 @@ import time
 import os
 import serial
 import signal
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Load configuration from environment variables
-MQTT_BROKER = os.environ.get('MQTT_BROKER', 'mqtt.example.com')
-MQTT_PORT = int(os.environ.get('MQTT_PORT', 1883))
-MQTT_TOPIC = os.environ.get('MQTT_TOPIC', 'iot/device/data')
-MQTT_CLIENT_ID = os.environ.get('MQTT_CLIENT_ID', 'raspberry_pi_client')
-MQTT_USERNAME = os.environ.get('MQTT_USERNAME', None)
-MQTT_PASSWORD = os.environ.get('MQTT_PASSWORD', None)
+MQTT_BROKER = os.getenv('MQTT_BROKER', 'mqtt.eclipse.org')
+MQTT_PORT = int(os.getenv('MQTT_PORT', 1883))
+MQTT_TOPIC = os.getenv('MQTT_TOPIC', 'iot/device/data')
+MQTT_CLIENT_ID = os.getenv('MQTT_CLIENT_ID', 'raspberry_pi_client')
+MQTT_USERNAME = os.getenv('MQTT_USERNAME', None)
+MQTT_PASSWORD = os.getenv('MQTT_PASSWORD', None)
 
 # Set the appropriate serial port
-SERIAL_PORT = os.environ.get('SERIAL_PORT', '/dev/ttyACM0')
-SERIAL_BAUD_RATE = int(os.environ.get('SERIAL_BAUD_RATE', 9600))
-PUBLISH_INTERVAL = int(os.environ.get('PUBLISH_INTERVAL', 10))  # in seconds
+SERIAL_PORT = os.getenv('SERIAL_PORT', '/dev/ttyACM0')
+SERIAL_BAUD_RATE = int(os.getenv('SERIAL_BAUD_RATE', 9600))
+PUBLISH_INTERVAL = int(os.getenv('PUBLISH_INTERVAL', 10))  # in seconds
 
 # Create an MQTT client instance
 client = mqtt.Client(client_id=MQTT_CLIENT_ID)
@@ -59,6 +62,7 @@ def read_sensor_data():
         with serial.Serial(SERIAL_PORT, SERIAL_BAUD_RATE) as ser:
             data = ser.readline().decode().strip()
             if data:
+                print(f"Read sensor data: {data}")
                 return json.loads(data)
     except (serial.SerialException, ValueError) as e:
         print(f"Error reading sensor data: {e}")
@@ -101,6 +105,18 @@ if MQTT_USERNAME and MQTT_PASSWORD:
 # Set the callback functions for the client
 client.on_connect = on_connect
 client.on_disconnect = on_disconnect
+
+# Print all environment variables
+print("Configuration:")
+print(f"  MQTT Broker: {MQTT_BROKER}")
+print(f"  MQTT Port: {MQTT_PORT}")
+print(f"  MQTT Topic: {MQTT_TOPIC}")
+print(f"  MQTT Client ID: {MQTT_CLIENT_ID}")
+print(f"  MQTT Username: {MQTT_USERNAME}")
+print(f"  MQTT Password: {'***' if MQTT_PASSWORD else None}")
+print(f"  Serial Port: {SERIAL_PORT}")
+print(f"  Serial Baud Rate: {SERIAL_BAUD_RATE}")
+print(f"  Publish Interval: {PUBLISH_INTERVAL} seconds")
 
 # Connect to the MQTT broker
 client.connect(MQTT_BROKER, MQTT_PORT)
