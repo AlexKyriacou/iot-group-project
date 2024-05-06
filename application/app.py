@@ -84,4 +84,4 @@ def background_task():
 
 if __name__ == '__main__':
     socketio.start_background_task(background_task)
-    socketio.run(app)
+    socketio.run(app, allow_unsafe_werkzeug=True, debug=True, host='0.0.0.0')
