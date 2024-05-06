@@ -1,5 +1,5 @@
-# app.py
 from flask import Flask, render_template
+from flask_socketio import SocketIO
 from mqtt.client import MQTTClient
 import os
 from dotenv import load_dotenv
@@ -7,6 +7,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
+# TODO: Replace with a secure secret key
+app.config['SECRET_KEY'] = 'your_secret_key'
+socketio = SocketIO(app)
 
 # print env vars
 print(os.getenv("MQTT_BROKER"))
@@ -29,7 +32,6 @@ mqtt_client = MQTTClient(
 # Start the MQTT client
 mqtt_client.start()
 
-data = []
 
 @app.route('/')
 def index():
@@ -37,11 +39,49 @@ def index():
     Render the homepage with the latest data from the MQTT broker.
 
     Returns:
-        str: Rendered HTML template with the data.
+        str: Rendered HTML template.
     """
-    data.append(mqtt_client.data)
-    return render_template('index.html', data=data)
+    return render_template('index.html')
+
+
+@socketio.on('connect')
+def handle_connect():
+    """
+    Handle a new WebSocket connection.
+    """
+    print('Client connected')
+
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    """
+    Handle a WebSocket disconnection.
+    """
+    print('Client disconnected')
+
+
+def emit_data(data):
+    """
+    Emit data to the WebSocket clients.
+
+    Args:
+        data (dict): The data to be emitted.
+    """
+    socketio.emit('mqtt_data', data)
+
+
+# Set up a background task to emit data from the MQTT client
+def background_task():
+    """
+    Background task to emit data from the MQTT client to the WebSocket clients.
+    """
+    while True:
+        data = mqtt_client.data
+        if data:
+            emit_data(data)
+        socketio.sleep(0.1)  # Small delay to avoid overwhelming the WebSocket
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    socketio.start_background_task(background_task)
+    socketio.run(app)
