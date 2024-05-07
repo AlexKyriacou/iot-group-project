@@ -39,8 +39,8 @@ bool MotionDetector::isMotionDetected()
 JsonDocument MotionDetector::getJsonData()
 {
   JsonDocument doc;
-  doc["name"] = "motion_detector";
-  doc["message"]["value"] = isMotionDetected();
+  doc["deviceType"] = "motionDetector";
+  doc["data"]["motion"] = isMotionDetected();
   motionDetected = false; // Reset the flag after retrieving the JSON data
   return doc;
 }
