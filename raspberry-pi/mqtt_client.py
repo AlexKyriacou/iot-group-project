@@ -24,7 +24,7 @@ class MQTTClient(mqtt.Client):
     def start(self):
         if self.username and self.password:
             self.username_pw_set(self.username, self.password)
-        self.connect(self.broker, self.port)
+        self.connect()
         self.loop_start()
 
     def connect(self):

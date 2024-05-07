@@ -27,7 +27,9 @@ def main():
         )
         serialized_data = json.dumps(sensor_data)
         print(f"Publishing sensor data: {sensor_data}")
-        mqtt_client.publish(config.mqtt_topic, serialized_data)
+        mqtt_client.publish(
+            f"motionDetector/{config.device_id}/status", serialized_data
+        )
         time.sleep(config.publish_interval)
 
 
