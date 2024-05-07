@@ -2,16 +2,16 @@
 #define LED_H
 
 class Led {
-    private:
-        int pin;
-        int state;
+private:
+  int pin;
+  int state;
 
-    public:
-        Led(int pin);
-        void setup();
-        void on();
-        void off();
-        void toggle();
+public:
+  Led(int pin);
+  void setup();
+  void on();
+  void off();
+  void toggle();
 };
 
 #endif

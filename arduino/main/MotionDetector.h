@@ -6,8 +6,7 @@
 /**
  * @brief Class representing a motion detector sensor.
  */
-class MotionDetector
-{
+class MotionDetector {
 public:
   /**
    * @brief Constructs a new MotionDetector object.
@@ -36,8 +35,8 @@ public:
   JsonDocument getJsonData();
 
 private:
-  int pirPin;          //!< The pin number for the PIR sensor.
-  bool motionDetected; //!< Flag to store the motion detection state
+  int pirPin;           //!< The pin number for the PIR sensor.
+  bool motionDetected;  //!< Flag to store the motion detection state
 };
 
 #endif

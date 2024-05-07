@@ -6,13 +6,12 @@
  * @param pirPin The pin number for the PIR sensor.
  */
 MotionDetector::MotionDetector(int pirPin)
-    : pirPin(pirPin), motionDetected(false) {}
+  : pirPin(pirPin), motionDetected(false) {}
 
 /**
  * @brief Initializes the PIR sensor pin mode.
  */
-void MotionDetector::setup()
-{
+void MotionDetector::setup() {
   pinMode(pirPin, INPUT);
 }
 
@@ -21,12 +20,10 @@ void MotionDetector::setup()
  *
  * @return true if motion is detected, false otherwise.
  */
-bool MotionDetector::isMotionDetected()
-{
+bool MotionDetector::isMotionDetected() {
   bool pir = digitalRead(pirPin);
-  if (pir)
-  {
-    motionDetected = true; // Set the flag to true when motion is detected
+  if (pir) {
+    motionDetected = true;  // Set the flag to true when motion is detected
   }
   return motionDetected;
 }
@@ -36,11 +33,10 @@ bool MotionDetector::isMotionDetected()
  *
  * @return A JsonDocument containing the motion detector data.
  */
-JsonDocument MotionDetector::getJsonData()
-{
+JsonDocument MotionDetector::getJsonData() {
   JsonDocument doc;
   doc["deviceType"] = "motionDetector";
   doc["data"]["motion"] = isMotionDetected();
-  motionDetected = false; // Reset the flag after retrieving the JSON data
+  motionDetected = false;  // Reset the flag after retrieving the JSON data
   return doc;
 }
