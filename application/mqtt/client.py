@@ -3,7 +3,7 @@ import json
 
 
 class MQTTClient:
-    def __init__(self, broker, port, topic, client_id, username=None, password=None):
+    def __init__(self, broker, port, topic, username=None, password=None):
         """
         Initialize the MQTT client.
 
@@ -18,11 +18,10 @@ class MQTTClient:
         self.broker = broker
         self.port = int(port)
         self.topic = topic
-        self.client_id = client_id
         self.username = username
         self.password = password
         self.client = mqtt.Client(
-            mqtt.CallbackAPIVersion.VERSION1, self.client_id)
+            mqtt.CallbackAPIVersion.VERSION1, client_id="flask-client")
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_message
         self.data = None

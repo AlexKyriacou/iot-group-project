@@ -1,7 +1,6 @@
 
 version: "3.7"
 services:
-  # mqtt5 eclipse-mosquitto
   mosquitto:
     image: eclipse-mosquitto
     container_name: mosquitto
@@ -18,7 +17,6 @@ services:
     container_name: flask
     ports:
       - "5000:5000"
-    restart: unless-stopped
     depends_on:
       - mosquitto
 

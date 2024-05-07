@@ -19,19 +19,6 @@ print(os.getenv("MQTT_CLIENT_ID"))
 print(os.getenv("MQTT_USERNAME"))
 print(os.getenv("MQTT_PASSWORD"))
 
-# Create an instance of the MQTT client
-mqtt_client = MQTTClient(
-    broker=os.getenv("MQTT_BROKER"),
-    port=os.getenv("MQTT_PORT"),
-    topic=os.getenv("MQTT_TOPIC"),
-    client_id=os.getenv("MQTT_CLIENT_ID"),
-    username=os.getenv("MQTT_USERNAME"),
-    password=os.getenv("MQTT_PASSWORD")
-)
-
-# Start the MQTT client
-mqtt_client.start()
-
 
 @app.route('/')
 def index():
@@ -83,5 +70,14 @@ def background_task():
 
 
 if __name__ == '__main__':
+    mqtt_client = MQTTClient(
+        broker=os.getenv("MQTT_BROKER"),
+        port=os.getenv("MQTT_PORT"),
+        topic=os.getenv("MQTT_TOPIC"),
+        username=os.getenv("MQTT_USERNAME"),
+        password=os.getenv("MQTT_PASSWORD")
+    )
+    mqtt_client.start()
     socketio.start_background_task(background_task)
-    socketio.run(app, allow_unsafe_werkzeug=True, debug=True, host='0.0.0.0')
+    socketio.run(app, allow_unsafe_werkzeug=True, debug=True,
+                 host='0.0.0.0', use_reloader=False)
