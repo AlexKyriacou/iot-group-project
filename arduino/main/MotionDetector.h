@@ -36,7 +36,8 @@ public:
   JsonDocument getJsonData();
 
 private:
-  int pirPin; //!< The pin number for the PIR sensor.
+  int pirPin;          //!< The pin number for the PIR sensor.
+  bool motionDetected; //!< Flag to store the motion detection state
 };
 
 #endif
