@@ -30,6 +30,23 @@ def main():
         mqtt_client.publish(
             f"motionDetector/{config.device_id}/status", serialized_data
         )
+
+        if mqtt_client.data:
+            if "deviceType" not in mqtt_client.data:
+                print(f"Received invalid data: {mqtt_client.data}")
+        
+            device_type = mqtt_client.data['deviceType']
+            match device_type:
+                case 'motionDetector':
+                    print(f"Received sensor data: {mqtt_client.data}")
+                    serial_reader.send_data(mqtt_client.data)
+                case 'alarmSystem':
+                    print(f"Received command data: {mqtt_client.data}")
+                    serial_reader.send_data(mqtt_client.data)
+                case _:
+                    print(f"Received unknown data: {mqtt_client.data}")
+            mqtt_client.data = None
+
         time.sleep(config.publish_interval)
 
 
@@ -42,7 +59,7 @@ if __name__ == "__main__":
     mqtt_client = MQTTClient(
         broker=config.mqtt_broker,
         port=config.mqtt_port,
-        topics=["motionDetector/+/command"],
+        topics=["motionDetector/+/command", "alarmSystem/command"],
         client_id=config.mqtt_client_id,
         username=config.mqtt_username,
         password=config.mqtt_password,
