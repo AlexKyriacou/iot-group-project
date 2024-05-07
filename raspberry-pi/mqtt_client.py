@@ -3,18 +3,19 @@ import json
 
 
 class MQTTClient(mqtt.Client):
-    def __init__(self, broker, port, topic, client_id, username=None, password=None):
+    def __init__(self, broker, port, topics, client_id, username=None, password=None):
         super().__init__(mqtt.CallbackAPIVersion.VERSION1, client_id=client_id)
         self.broker = broker
         self.port = int(port)
-        self.topic = topic
+        self.topics = topics
         self.username = username
         self.password = password
         self.data = None
 
     def on_connect(self, client, userdata, flags, rc):
         print(f"Connected to MQTT broker with result code {str(rc)}")
-        client.subscribe(self.topic)
+        for topic in self.topics:
+            client.subscribe(topic)
 
     def on_message(self, client, userdata, msg):
         self.data = json.loads(msg.payload.decode())

@@ -37,7 +37,7 @@ if __name__ == "__main__":
     mqtt_client = MQTTClient(
         broker=config.mqtt_broker,
         port=config.mqtt_port,
-        topic=config.mqtt_topic,
+        topics=["motionDetector/+/command"],
         client_id=config.mqtt_client_id,
         username=config.mqtt_username,
         password=config.mqtt_password,
