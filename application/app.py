@@ -1,6 +1,8 @@
 from flask import Flask, render_template
 from flask_socketio import SocketIO
 from mqtt.client import MQTTClient
+from datetime import datetime
+import json
 
 from config import Config
 
@@ -35,6 +37,30 @@ def handle_disconnect():
     Handle a WebSocket disconnection.
     """
     print("Client disconnected")
+
+
+@socketio.on("command_alarm")
+def handle_command_alarm(data):
+    """
+    Handle a command to enable or disable the alarm.
+
+    Args:
+        data (dict): The command data.
+    """
+    alarmObject = build_alarm_object(data)
+    serializedAlarmObject = json.dumps(alarmObject)
+    mqtt_client.publish("alarmSystem/command", serializedAlarmObject)
+
+
+def build_alarm_object(requestData):
+    alarmObject = {}
+    if "command" not in requestData:
+        return None
+
+    alarmObject["deviceType"] = "alarmSystem"
+    alarmObject["data"] = {}
+    alarmObject["data"]["command"] = requestData["command"]
+    return alarmObject
 
 
 def emit_data(data):

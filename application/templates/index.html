@@ -1,71 +1,109 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Motion Detector Dashboard</title>
     <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f0f0f0;
-        }
-        
-        #status-container {
-            margin-top: 50px;
-            font-size: 24px;
-            font-weight: bold;
-            color: #333;
-        }
-        
-        #timestamp-container {
-            margin-top: 20px;
-            font-size: 18px;
-            color: #666;
-        }
-        
-        .motion-detected {
-            color: red;
-        }
-        
-        .no-motion {
-            color: green;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background-color: #f0f0f0;
+      }
+
+      #status-container {
+        margin-top: 50px;
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+      }
+
+      #timestamp-container {
+        margin-top: 20px;
+        font-size: 18px;
+        color: #666;
+      }
+
+      .motion-detected {
+        color: red;
+      }
+
+      .no-motion {
+        color: green;
+      }
+
+      #arm-disarm-button {
+        margin-top: 30px;
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
     </style>
     <script>
-        const socket = io.connect("http://" + document.domain + ":" + location.port);
-        
-        socket.on("connect", () => {
-            console.log("WebSocket connected");
-        });
-        
-        socket.on("disconnect", () => {
-            console.log("WebSocket disconnected");
-        });
-        
-        socket.on("mqtt_data", (data) => {
-            const isMovementDetected = data["data"]["motion"];
-            const timestamp = new Date(data["timestamp"] * 1000).toLocaleString();
-            
-            const statusContainer = document.getElementById("status-container");
-            const timestampContainer = document.getElementById("timestamp-container");
-            
-            if (isMovementDetected) {
-                statusContainer.textContent = "🚨 Motion Detected 🚨";
-                statusContainer.classList.add("motion-detected");
-                statusContainer.classList.remove("no-motion");
-            } else {
-                statusContainer.textContent = "No Motion";
-                statusContainer.classList.remove("motion-detected");
-                statusContainer.classList.add("no-motion");
-            }
-            
-            timestampContainer.textContent = `Last Update: ${timestamp}`;
-        });
+      const socket = io.connect(
+        "http://" + document.domain + ":" + location.port
+      );
+      let isAlarmArmed = false;
+
+      socket.on("connect", () => {
+        console.log("WebSocket connected");
+      });
+
+      socket.on("disconnect", () => {
+        console.log("WebSocket disconnected");
+      });
+
+      socket.on("mqtt_data", (data) => {
+        const isMovementDetected = data["data"]["motion"];
+        const timestamp = new Date(data["timestamp"] * 1000).toLocaleString();
+
+        const statusContainer = document.getElementById("status-container");
+        const timestampContainer = document.getElementById(
+          "timestamp-container"
+        );
+
+        if (isMovementDetected && isAlarmArmed) {
+          statusContainer.textContent = "🚨 Motion Detected 🚨";
+          statusContainer.classList.add("motion-detected");
+          statusContainer.classList.remove("no-motion");
+        } else if (isMovementDetected && !isAlarmArmed) {
+          statusContainer.textContent = "Motion Detected";
+          statusContainer.classList.add("motion-detected");
+          statusContainer.classList.remove("no-motion");
+        } else {
+          statusContainer.textContent = "No Motion";
+          statusContainer.classList.remove("motion-detected");
+          statusContainer.classList.add("no-motion");
+        }
+
+        timestampContainer.textContent = `Last Update: ${timestamp}`;
+      });
+
+      function armDisarmAlarm() {
+        isAlarmArmed = !isAlarmArmed;
+        const armDisarmButton = document.getElementById("arm-disarm-button");
+        armDisarmButton.textContent = isAlarmArmed
+          ? "Disarm Alarm"
+          : "Arm Alarm";
+
+        // Publish a command to arm or disarm the alarm system
+        const commandData = {
+          command: isAlarmArmed ? "arm" : "disarm",
+        };
+        socket.emit("command_alarm", commandData);
+      }
     </script>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Motion Detector Dashboard</h1>
     <div id="status-container"></div>
     <div id="timestamp-container"></div>
-</body>
+    <button
+      id="arm-disarm-button"
+      onclick="armDisarmAlarm()">
+      Arm Alarm
+    </button>
+  </body>
 </html>
