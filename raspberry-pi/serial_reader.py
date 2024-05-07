@@ -24,3 +24,8 @@ class SerialReader:
         data["deviceId"] = self.config.device_id
         data["timestamp"] = int(datetime.now().timestamp())
         return data
+    
+    def send_data(self, data: dict[str, any]):
+        serialized_data = json.dumps(data)
+        self.serial.write(serialized_data.encode())
+        print(f"Sent data: {serialized_data}")
