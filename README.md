@@ -88,15 +88,19 @@ The MQTT topics are structured in a hierarchical manner, following the pattern:
 
 - `{deviceType}`: The type of device, such as `motionDetector`, `gasSensor`, or `sprinkler`.
 - `{deviceId}`: A unique identifier for the specific device instance.
-- `{action}`: The action or event being published or subscribed to, such as `status`, `command`, or `configuration`.
+- `{action}`: The action or event being published or subscribed to, such as `status`, or `configuration`.
 
 For example:
 
 - `motionDetector/device001/status`: Publish motion detector status
 - `gasSensor/device002/status`: Publish gas sensor readings
-- `sprinkler/device003/command`: Subscribe to commands for controlling the sprinkler
 - `motionDetector/device001/configuration`: Subscribe to configuration updates for the motion detector
 - `motionDetector/+/status`: Subscribe to all motionDetector status updates
+
+For commands that affect the entire system i.e. arming the alarm on all motion sensors we simply remove the `{deviceId}` param
+
+i.e.
+- `alarmSystem/command`: Pub/Sub to all commands that have been given to the alarm system as a whole
 
 ### JSON Message Schema
 
@@ -106,9 +110,9 @@ The JSON messages have a consistent structure to ensure interoperability and eas
 {
   "deviceType": "string",
   "deviceId": "string",
-  "timestamp": integer unix time stamp,
+  "timestamp": "integer unix time stamp",
   "data": {
-    // Sensor-specific data structure
+    "placeholder": "Sensor-specific data structure"
   }
 }
 ```
@@ -130,33 +134,33 @@ For example, a motion detector status message might look like:
   }
 }
 ```
+> [!NOTE] 
+> Note that the time stamps and device ID's are added to the messages within the rasberry pi
+>
+> Messages will be transmitted in the following schema from the Ardunio before having the ID and timestamp added:
+```json
+{
+    "deviceType": "motionDetector",
+    "data": {
+      "motion": true
+    }
+}
+```
 
-And a command to arm or disarm the alarm system could be:
 
+A command from the web app to the arduino will use a slighly different structure since it isnt really necessary to define the deviceID or the timestamp
+
+E.G. to arm or disarm the alarm system could be:
 ```json
 {
   "deviceType": "alarmSystem",
-  "deviceId": "device001",
-  "timestamp": 1715069574,
   "data": {
     "command": "arm"
   }
 }
 ```
 
-> [!NOTE] 
-> Note that the time stamps and device ID's are added to the messages within the rasberry pi
->
-> Messages will be transmitted in the following schema from the Ardunio before having the ID and timestamp added:
 
-```json
-{
-    "deviceType": "alarmSystem",
-    "data": {
-        "command": "arm"
-    }
-}
-```
 
 ## Future Enhancements
 
