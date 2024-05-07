@@ -1,26 +1,16 @@
 from flask import Flask, render_template
 from flask_socketio import SocketIO
 from mqtt.client import MQTTClient
-import os
-from dotenv import load_dotenv
 
-load_dotenv()
+from config import Config
 
 app = Flask(__name__)
 # TODO: Replace with a secure secret key
-app.config['SECRET_KEY'] = 'your_secret_key'
+app.config["SECRET_KEY"] = "your_secret_key"
 socketio = SocketIO(app)
 
-# print env vars
-print(os.getenv("MQTT_BROKER"))
-print(os.getenv("MQTT_PORT"))
-print(os.getenv("MQTT_TOPIC"))
-print(os.getenv("MQTT_CLIENT_ID"))
-print(os.getenv("MQTT_USERNAME"))
-print(os.getenv("MQTT_PASSWORD"))
 
-
-@app.route('/')
+@app.route("/")
 def index():
     """
     Render the homepage with the latest data from the MQTT broker.
@@ -28,23 +18,23 @@ def index():
     Returns:
         str: Rendered HTML template.
     """
-    return render_template('index.html')
+    return render_template("index.html")
 
 
-@socketio.on('connect')
+@socketio.on("connect")
 def handle_connect():
     """
     Handle a new WebSocket connection.
     """
-    print('Client connected')
+    print("Client connected")
 
 
-@socketio.on('disconnect')
+@socketio.on("disconnect")
 def handle_disconnect():
     """
     Handle a WebSocket disconnection.
     """
-    print('Client disconnected')
+    print("Client disconnected")
 
 
 def emit_data(data):
@@ -54,7 +44,7 @@ def emit_data(data):
     Args:
         data (dict): The data to be emitted.
     """
-    socketio.emit('mqtt_data', data)
+    socketio.emit("mqtt_data", data)
 
 
 # Set up a background task to emit data from the MQTT client
@@ -70,15 +60,18 @@ def background_task():
         socketio.sleep(0.1)  # Small delay to avoid overwhelming the WebSocket
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
+    config = Config()
     mqtt_client = MQTTClient(
-        broker=os.getenv("MQTT_BROKER"),
-        port=os.getenv("MQTT_PORT"),
-        topic=os.getenv("MQTT_TOPIC"),
-        username=os.getenv("MQTT_USERNAME"),
-        password=os.getenv("MQTT_PASSWORD")
+        broker=config.broker,
+        port=config.port,
+        topics=["motionDetector/+/status"],
+        client_id=config.client_id,
+        username=config.username,
+        password=config.password,
     )
     mqtt_client.start()
     socketio.start_background_task(background_task)
-    socketio.run(app, allow_unsafe_werkzeug=True, debug=True,
-                 host='0.0.0.0', use_reloader=False)
+    socketio.run(
+        app, allow_unsafe_werkzeug=True, debug=True, host="0.0.0.0", use_reloader=False
+    )

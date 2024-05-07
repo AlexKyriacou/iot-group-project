@@ -20,11 +20,12 @@
         console.log("Received data:", data);
         const dataContainer = document.getElementById("data-container");
         const dataElement = document.createElement("pre");
-        var isMovementDetected = data["message"]["value"];
+        var isMovementDetected = data["data"]["motion"];
+        var timestamp = data["timestamp"];
         if (isMovementDetected) {
-          dataElement.textContent = "🚨🚨🚨 Movement Detected 🚨🚨🚨";
+          dataElement.textContent = "🚨🚨🚨 Movement Detected 🚨🚨🚨 " + String(timestamp);
         } else {
-          dataElement.textContent = "No Movement";
+          dataElement.textContent = "No Movement" + String(timestamp);
         }
         dataContainer.innerHTML = "";
         dataContainer.appendChild(dataElement);
