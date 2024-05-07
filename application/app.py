@@ -66,6 +66,7 @@ def background_task():
         data = mqtt_client.data
         if data:
             emit_data(data)
+            mqtt_client.data = None
         socketio.sleep(0.1)  # Small delay to avoid overwhelming the WebSocket
 
 

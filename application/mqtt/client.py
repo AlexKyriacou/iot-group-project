@@ -12,8 +12,8 @@ class MQTTClient:
             port (int): The port number of the MQTT broker.
             topic (str): The MQTT topic to subscribe to.
             client_id (str): The client ID for the MQTT client.
-            username (str, optional): The username for MQTT broker authentication.
-            password (str, optional): The password for MQTT broker authentication.
+            username (str, optional): Username for MQTT broker authentication.
+            password (str, optional): Password for MQTT broker authentication.
         """
         self.broker = broker
         self.port = int(port)
