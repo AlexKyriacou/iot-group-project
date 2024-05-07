@@ -1,4 +1,3 @@
-
 # IoT Motion Detector Alarm System
 
 This project is an IoT-based motion detector alarm system with the ability to expand into a gas sensor/water sprinkler system in the future. The system consists of an Arduino Uno with a PIR sensor, a Raspberry Pi that reads data from the Arduino and publishes it to an MQTT broker, and a Flask web application that subscribes to the MQTT broker and displays the motion data.
@@ -74,6 +73,90 @@ Once everything is set up, you can run the system as follows:
 2. In another terminal, run the `iot-mqtt-client.py` script using `python iot-mqtt-client.py`. This script will read the motion data from the Arduino (if connected to your local machine) and publish it to the MQTT broker.
 
 The Flask application should now display the motion detection status received from the Arduino via the MQTT broker.
+
+## MQTT and JSON Schema
+
+This project follows a specific schema for MQTT topics and JSON messages to ensure modularity, configurability, and reusability.
+
+### MQTT Topics
+
+The MQTT topics are structured in a hierarchical manner, following the pattern:
+
+```
+{deviceType}/{deviceId}/{action}
+```
+
+- `{deviceType}`: The type of device, such as `motionDetector`, `gasSensor`, or `sprinkler`.
+- `{deviceId}`: A unique identifier for the specific device instance.
+- `{action}`: The action or event being published or subscribed to, such as `status`, `command`, or `configuration`.
+
+For example:
+
+- `motionDetector/device001/status`: Publish motion detector status
+- `gasSensor/device002/status`: Publish gas sensor readings
+- `sprinkler/device003/command`: Subscribe to commands for controlling the sprinkler
+- `motionDetector/device001/configuration`: Subscribe to configuration updates for the motion detector
+- `motionDetector/+/status`: Subscribe to all motionDetector status updates
+
+### JSON Message Schema
+
+The JSON messages have a consistent structure to ensure interoperability and ease of processing:
+
+```json
+{
+  "deviceType": "string",
+  "deviceId": "string",
+  "timestamp": integer unix time stamp,
+  "data": {
+    // Sensor-specific data structure
+  }
+}
+```
+
+- `deviceType`: The type of device, matching the `{deviceType}` in the MQTT topic structure.
+- `deviceId`: The unique identifier of the device instance, matching the `{deviceId}` in the MQTT topic structure.
+- `timestamp`: The time when the message was generated, represented in unix time stamp format.
+- `data`: An object containing the sensor-specific data structure.
+
+For example, a motion detector status message might look like:
+
+```json
+{
+  "deviceType": "motionDetector",
+  "deviceId": "device001",
+  "timestamp": 1715069574,
+  "data": {
+    "motion": true
+  }
+}
+```
+
+And a command to arm or disarm the alarm system could be:
+
+```json
+{
+  "deviceType": "alarmSystem",
+  "deviceId": "device001",
+  "timestamp": 1715069574,
+  "data": {
+    "command": "arm"
+  }
+}
+```
+
+> [!NOTE] 
+> Note that the time stamps and device ID's are added to the messages within the rasberry pi
+>
+> Messages will be transmitted in the following schema from the Ardunio before having the ID and timestamp added:
+
+```json
+{
+    "deviceType": "alarmSystem",
+    "data": {
+        "command": "arm"
+    }
+}
+```
 
 ## Future Enhancements
 
