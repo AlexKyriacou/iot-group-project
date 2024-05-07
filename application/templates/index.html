@@ -1,39 +1,71 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>MQTT Data</title>
+<head>
+    <title>Motion Detector Dashboard</title>
     <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>
-    <script>
-      const socket = io.connect(
-        "http://" + document.domain + ":" + location.port
-      );
-
-      socket.on("connect", () => {
-        console.log("WebSocket connected");
-      });
-
-      socket.on("disconnect", () => {
-        console.log("WebSocket disconnected");
-      });
-
-      socket.on("mqtt_data", (data) => {
-        console.log("Received data:", data);
-        const dataContainer = document.getElementById("data-container");
-        const dataElement = document.createElement("pre");
-        var isMovementDetected = data["data"]["motion"];
-        var timestamp = data["timestamp"];
-        if (isMovementDetected) {
-          dataElement.textContent = "🚨🚨🚨 Movement Detected 🚨🚨🚨 " + String(timestamp);
-        } else {
-          dataElement.textContent = "No Movement" + String(timestamp);
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
         }
-        dataContainer.innerHTML = "";
-        dataContainer.appendChild(dataElement);
-      });
+        
+        #status-container {
+            margin-top: 50px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        #timestamp-container {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #666;
+        }
+        
+        .motion-detected {
+            color: red;
+        }
+        
+        .no-motion {
+            color: green;
+        }
+    </style>
+    <script>
+        const socket = io.connect("http://" + document.domain + ":" + location.port);
+        
+        socket.on("connect", () => {
+            console.log("WebSocket connected");
+        });
+        
+        socket.on("disconnect", () => {
+            console.log("WebSocket disconnected");
+        });
+        
+        socket.on("mqtt_data", (data) => {
+            const isMovementDetected = data["data"]["motion"];
+            const timestamp = new Date(data["timestamp"] * 1000).toLocaleString();
+            
+            const statusContainer = document.getElementById("status-container");
+            const timestampContainer = document.getElementById("timestamp-container");
+            
+            if (isMovementDetected) {
+                statusContainer.textContent = "🚨 Motion Detected 🚨";
+                statusContainer.classList.add("motion-detected");
+                statusContainer.classList.remove("no-motion");
+            } else {
+                statusContainer.textContent = "No Motion";
+                statusContainer.classList.remove("motion-detected");
+                statusContainer.classList.add("no-motion");
+            }
+            
+            timestampContainer.textContent = `Last Update: ${timestamp}`;
+        });
     </script>
-  </head>
-  <body>
-    <h1>MQTT Data</h1>
-    <div id="data-container"></div>
-  </body>
+</head>
+<body>
+    <h1>Motion Detector Dashboard</h1>
+    <div id="status-container"></div>
+    <div id="timestamp-container"></div>
+</body>
 </html>
