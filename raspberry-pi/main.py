@@ -22,6 +22,9 @@ def main():
 
     while True:
         sensor_data = serial_reader.read_sensor_data()
+        sensor_data = serial_reader.update_data_with_device_id_and_timestamp(
+            sensor_data
+        )
         serialized_data = json.dumps(sensor_data)
         print(f"Publishing sensor data: {sensor_data}")
         mqtt_client.publish(config.mqtt_topic, serialized_data)

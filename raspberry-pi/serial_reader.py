@@ -1,5 +1,6 @@
 import json
 import serial
+from datetime import datetime
 
 
 class SerialReader:
@@ -18,3 +19,8 @@ class SerialReader:
         except (serial.SerialException, ValueError) as e:
             print(f"Error reading sensor data: {e}")
         return {}
+
+    def update_data_with_device_id_and_timestamp(self, data: dict[str, any]):
+        data["deviceId"] = self.config.device_id
+        data["timestamp"] = int(datetime.now().timestamp())
+        return data
