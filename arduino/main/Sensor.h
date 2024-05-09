@@ -6,7 +6,8 @@
 class Sensor {
 public:
   virtual void setup() = 0;
-  virtual bool isDetected() = 0;
+  virtual bool isDetected();
+  virtual float value() { return 0.0f; };
   virtual JsonDocument getJsonData() = 0;
 };
 
