@@ -30,7 +30,8 @@ Follow these steps to set up and run the project:
 1. Navigate to the root directory of the project (`cd ..` if you're in a child directory).
 2. Run `docker-compose up -d` to start the Mosquitto MQTT broker container.
 
-Note: The password setup within the Mosquitto server only needs to happen once for authenticating the clients (Raspberry Pi and Flask application). After setting up the passwords, the `docker-compose.yml` file in the root directory can be used to start both the Flask and Mosquitto server containers.
+> [!NOTE] 
+> The password setup within the Mosquitto server only needs to happen once for authenticating the clients (Raspberry Pi and Flask application). After setting up the passwords, the `docker-compose.yml` file in the root directory can be used to start both the Flask and Mosquitto server containers.
 
 3. Create a new file named `pwfile` that will hold the hashed passwords in `mosquitto/config`
 4. Create a user and password for the MQTT broker by running the following commands (only required if you haven't set up the passwords before) [reference](https://github.com/sukesh-ak/setup-mosquitto-with-docker):
@@ -60,7 +61,8 @@ mosquitto_passwd /mosquitto/config/pwfile flask-application
 
 Once everything is set up, you can run the system as follows:
 
-_Note: if any docker containers are running, the following steps might fail, run `docker-compose down` in all directories (root, .\mosquitto\ and .\application\) before you go through the following steps_
+> [!NOTE] 
+> If any docker containers are running, the following steps might fail, run `docker-compose down` in all directories (root, .\mosquitto\ and .\application\) before you go through the following steps
 
 1. In one terminal, start the Mosquitto MQTT broker and Flask application by running `docker-compose up` in the project's root directory.
 2. In another terminal, navigate to the `raspberry-pi` directory and run the `main.py` script using `py main.py`. This script will read the motion data from the Arduino (if connected to your local machine) and publish it to the MQTT broker.
