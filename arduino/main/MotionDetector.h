@@ -1,42 +1,18 @@
 #ifndef MotionDetector_h
 #define MotionDetector_h
 
-#include <ArduinoJson.h>
+#include "Sensor.h"
 
-/**
- * @brief Class representing a motion detector sensor.
- */
-class MotionDetector {
+class MotionDetector : public Sensor {
 public:
-  /**
-   * @brief Constructs a new MotionDetector object.
-   *
-   * @param pirPin The pin number for the PIR sensor.
-   */
   MotionDetector(int pirPin);
-
-  /**
-   * @brief Initializes the PIR sensor pin mode.
-   */
-  void setup();
-
-  /**
-   * @brief Checks if motion is detected by the PIR sensor.
-   *
-   * @return true if motion is detected, false otherwise.
-   */
-  bool isMotionDetected();
-
-  /**
-   * @brief Retrieves the motion detector data as a JsonDocument.
-   *
-   * @return A JsonDocument containing the motion detector data.
-   */
-  JsonDocument getJsonData();
+  void setup() override;
+  bool isDetected() override;
+  JsonDocument getJsonData() override;
 
 private:
-  int pirPin;           //!< The pin number for the PIR sensor.
-  bool motionDetected;  //!< Flag to store the motion detection state
+  int pirPin;
+  bool motionDetected;
 };
 
 #endif

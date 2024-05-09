@@ -3,11 +3,21 @@
 
 #define PRINT_INTERVAL 1000  // 1 second
 
-AlarmSystem::AlarmSystem(int pirPin, int ledPin)
-  : motionDetector(pirPin), motionLed(ledPin), alarmArmed(false), lastPrintTime(0) {}
+AlarmSystem::AlarmSystem(int ledPin)
+  : motionLed(ledPin), alarmArmed(false), lastPrintTime(0), numSensors(0) {}
+
+void AlarmSystem::addSensor(Sensor* sensor) {
+  if (numSensors < MAX_SENSORS) {
+    sensors[numSensors++] = sensor;
+  } else {
+    Serial.println("Error: Maximum number of sensors reached.");
+  }
+}
 
 void AlarmSystem::setup() {
-  motionDetector.setup();
+  for (int i = 0; i < numSensors; i++) {
+    sensors[i]->setup();
+  }
   motionLed.setup();
 }
 
@@ -19,10 +29,10 @@ void AlarmSystem::loop() {
   }
 
   updateMotionLed();
-  printMotionStatus();
+  printSensorStatus();
 }
 
-void AlarmSystem::handleCommand(const String &command) {
+void AlarmSystem::handleCommand(const String& command) {
   if (command == "arm") {
     alarmArmed = true;
   } else if (command == "disarm") {
@@ -31,19 +41,29 @@ void AlarmSystem::handleCommand(const String &command) {
 }
 
 void AlarmSystem::updateMotionLed() {
-  if (alarmArmed && motionDetector.isMotionDetected()) {
+  bool anyDetected = false;
+  for (int i = 0; i < numSensors; i++) {
+    if (alarmArmed && sensors[i]->isDetected()) {
+      anyDetected = true;
+      break;
+    }
+  }
+
+  if (anyDetected) {
     motionLed.on();
   } else {
     motionLed.off();
   }
 }
 
-void AlarmSystem::printMotionStatus() {
+void AlarmSystem::printSensorStatus() {
   unsigned long currentTime = millis();
   if (currentTime - lastPrintTime >= PRINT_INTERVAL) {
-    JsonDocument motionData = motionDetector.getJsonData();
-    serializeJson(motionData, Serial);
-    Serial.println();
+    for (int i = 0; i < numSensors; i++) {
+      JsonDocument sensorData = sensors[i]->getJsonData();
+      serializeJson(sensorData, Serial);
+      Serial.println();
+    }
     lastPrintTime = currentTime;
   }
 }

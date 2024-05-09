@@ -1,20 +1,24 @@
-#include "MotionDetector.h"
+#include "Sensor.h"
 #include "Led.h"
 #include "CommandManager.h"
 
+#define MAX_SENSORS 5
+
 class AlarmSystem {
 public:
-  AlarmSystem(int pirPin, int ledPin);
+  AlarmSystem(int ledPin);
+  void addSensor(Sensor* sensor);
   void setup();
   void loop();
-  void handleCommand(const String &command);
+  void handleCommand(const String& command);
 
 private:
-  MotionDetector motionDetector;
+  Sensor* sensors[MAX_SENSORS];
+  int numSensors;
   Led motionLed;
   bool alarmArmed;
   unsigned long lastPrintTime;
 
   void updateMotionLed();
-  void printMotionStatus();
+  void printSensorStatus();
 };
