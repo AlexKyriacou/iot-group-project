@@ -91,7 +91,7 @@ if __name__ == "__main__":
     mqtt_client = MQTTClient(
         broker=config.broker,
         port=config.port,
-        topics=["motionDetector/+/status"],
+        topics=["motionDetector/+/status", "ultraSonicSensor/+/status", "gasSensor/+/status", "flameSensor/+/status"],
         client_id=config.client_id,
         username=config.username,
         password=config.password,

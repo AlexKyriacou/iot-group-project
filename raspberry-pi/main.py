@@ -39,13 +39,7 @@ def read_and_publish_sensor_data():
     sensor_data = serial_reader.update_data_with_device_id_and_timestamp(sensor_data)
     serialized_data = json.dumps(sensor_data)
     print(f"Publishing sensor data: {sensor_data}")
-    # handle different device types
-    if "deviceType" not in sensor_data:
-        print(f"Invalid data: {sensor_data}")
-        return
-    device_type = sensor_data["deviceType"]
-    mqtt_client.publish(f"{device_type}/{config.device_id}/status", serialized_data)
-
+    mqtt_client.publish(f"v1/devices/me/telemetry", serialized_data)
 
 def main():
     mqtt_client.connect()

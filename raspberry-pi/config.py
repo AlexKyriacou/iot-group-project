@@ -3,7 +3,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-
 class Config:
     def __init__(self):
         self.mqtt_broker = os.getenv("MQTT_BROKER", "mqtt.eclipse.org")

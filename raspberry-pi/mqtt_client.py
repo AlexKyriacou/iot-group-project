@@ -14,6 +14,8 @@ class MQTTClient(mqtt.Client):
 
     def on_connect(self, client, userdata, flags, rc):
         print(f"Connected to MQTT broker with result code {str(rc)}")
+        print(f"topics: {self.topics}")
+
         for topic in self.topics:
             client.subscribe(topic)
 
@@ -23,13 +25,13 @@ class MQTTClient(mqtt.Client):
 
     def start(self):
         if self.username and self.password:
-            self.username_pw_set(self.username, self.password)
+            self.username_pw_set(self.username)
         self.connect()
         self.loop_start()
 
     def connect(self):
         if self.username and self.password:
-            self.username_pw_set(self.username, self.password)
+            self.username_pw_set(self.username)
         super().connect(self.broker, self.port)
         self.loop_start()
 
