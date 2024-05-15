@@ -6,7 +6,6 @@ from config import Config
 from mqtt_client import MQTTClient
 from serial_reader import SerialReader
 
-
 def signal_handler(signal, frame):
     """
     Handle signals to gracefully exit the program.
@@ -15,24 +14,21 @@ def signal_handler(signal, frame):
     mqtt_client.loop_stop()
     mqtt_client.disconnect()
     exit(0)
-
-
+    
 def handle_mqtt_data():
     if mqtt_client.data:
         if "deviceType" not in mqtt_client.data:
             print(f"Received invalid data: {mqtt_client.data}")
             mqtt_client.data = None
             return
-
+        
         device_type = mqtt_client.data["deviceType"]
-        match device_type:
-            case "alarmSystem":
-                print(f"Received command data: {mqtt_client.data}")
-                serial_reader.send_data(mqtt_client.data)
-            case _:
-                print(f"Received unknown data: {mqtt_client.data}")
+        if device_type == "alarmSystem":
+            print(f"Received command data: {mqtt_client.data}")
+            serial_reader.send_data(mqtt_client.data)
+        else:
+            print(f"Received unknown data: {mqtt_client.data}")
         mqtt_client.data = None
-
 
 def read_and_publish_sensor_data():
     sensor_data = serial_reader.read_sensor_data()

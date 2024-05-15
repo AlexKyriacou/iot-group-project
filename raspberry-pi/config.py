@@ -11,7 +11,7 @@ class Config:
         self.mqtt_username = os.getenv("MQTT_USERNAME", None)
         self.mqtt_password = os.getenv("MQTT_PASSWORD", None)
 
-        self.serial_port = os.getenv("SERIAL_PORT", "/dev/ttyACM0")
+        self.serial_port = os.getenv("SERIAL_PORT", "/dev/ttyS0")
         self.serial_baud_rate = int(os.getenv("SERIAL_BAUD_RATE", 9600))
         self.publish_interval = int(os.getenv("PUBLISH_INTERVAL", 10))
 

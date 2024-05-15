@@ -12,7 +12,7 @@ class SerialReader:
 
     def read_sensor_data(self):
         try:
-            data = self.serial.readline().decode().strip()
+            data = self.serial.readline().decode('utf-8').strip()
             if data:
                 print(f"Read sensor data: {data}")
                 return json.loads(data)
