@@ -4,9 +4,11 @@
 #include "GasSensor.h"
 #include "FlameSensor.h"
 
-#define ALARM_PIN 6
+#define MMBuzzerPin 4
+#define AWLedPin 6
+#define AKLedPin 5
 
-AlarmSystem alarmSystem(ALARM_PIN);
+AlarmSystem alarmSystem(AKLedPin, AWLedPin, MMBuzzerPin);
 
 // add/remove all the sensors that you are using here and the pins they need
 #define PIR_PIN 7

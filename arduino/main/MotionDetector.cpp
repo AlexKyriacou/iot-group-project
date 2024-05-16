@@ -21,3 +21,7 @@ JsonDocument MotionDetector::getJsonData() {
   motionDetected = false;  // Reset the flag after retrieving the JSON data
   return doc;
 }
+
+String MotionDetector::getType() {
+  return "motionDetector";
+}

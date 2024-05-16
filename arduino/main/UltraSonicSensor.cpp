@@ -20,10 +20,6 @@ float UltraSonicSensor::value() {
   float duration = pulseIn(echoPin, HIGH);
   float dist = (duration*.0343)/2;
 
-  if (dist < 5) {
-    tooClose = true;
-  }
-  
   return dist;
 }
 
@@ -36,4 +32,8 @@ JsonDocument UltraSonicSensor::getJsonData() {
   doc["data"]["distance"] = value();
   tooClose = false; // Reset the flag after retrieving the JSON data
   return doc;
+}
+
+String UltraSonicSensor::getType() {
+  return "ultraSonicSensor";
 }

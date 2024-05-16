@@ -9,6 +9,7 @@ public:
   void setup() override;
   bool isDetected() override;
   JsonDocument getJsonData() override;
+  String getType() override;
 
 private:
   int pirPin;

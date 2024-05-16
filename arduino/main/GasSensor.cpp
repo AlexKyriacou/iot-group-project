@@ -27,3 +27,7 @@ JsonDocument GasSensor::getJsonData() {
   gasDetected = false;  // Reset the flag after retrieving the JSON data
   return doc;
 }
+
+String GasSensor::getType() {
+  return "gasSensor";
+}

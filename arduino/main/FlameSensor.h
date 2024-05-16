@@ -10,6 +10,7 @@ public:
   bool isDetected() override;
   float value() override;
   JsonDocument getJsonData() override;
+  String getType() override;
 
 private:
   int flamePin;

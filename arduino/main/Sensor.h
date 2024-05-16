@@ -9,6 +9,7 @@ public:
   virtual bool isDetected();
   virtual float value() { return 0.0f; };
   virtual JsonDocument getJsonData() = 0;
+  virtual String getType();
 };
 
 #endif

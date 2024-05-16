@@ -26,3 +26,7 @@ JsonDocument FlameSensor::getJsonData() {
   flameDetected = false;  // Reset the flag after retrieving the JSON data
   return doc;
 }
+
+String FlameSensor::getType() {
+  return "flameSensor";
+}

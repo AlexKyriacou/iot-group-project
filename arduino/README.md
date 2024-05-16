@@ -22,7 +22,7 @@ The project follows an object-oriented design with the following classes:
 
 - `Sensor`: An abstract base class that defines the interface for different sensor types.
 - `MotionDetector`: A concrete implementation of the `Sensor` class for the PIR motion sensor.
-- `Led`: A class that encapsulates the functionality of an LED.
+- `Alarm`: A class that encapsulates the functionality of an alarm, either a LED or a Buzzer.
 - `AlarmSystem`: The main class that manages the alarm system, handles user commands, and coordinates the sensors and LED.
 - `CommandManager`: A utility class for deserializing commands received over the serial communication.
 
