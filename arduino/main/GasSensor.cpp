@@ -23,9 +23,7 @@ bool GasSensor::isDetected() {
 
 JsonDocument GasSensor::getJsonData() {
   JsonDocument doc;
-  doc["deviceType"] = "gasSensor";
-  doc["data"]["gas"] = isDetected();
-  doc["data"]["gasLevel"] = value();
+  doc["data"]["gas"] = value();
   gasDetected = false;  // Reset the flag after retrieving the JSON data
   return doc;
 }

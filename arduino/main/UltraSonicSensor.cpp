@@ -33,9 +33,7 @@ bool UltraSonicSensor::isDetected() {
 
 JsonDocument UltraSonicSensor::getJsonData() {
   JsonDocument doc;
-  doc["deviceType"] = "ultraSonicSensor";
   doc["data"]["distance"] = value();
-  doc["data"]["close"] = isDetected();
   tooClose = false; // Reset the flag after retrieving the JSON data
   return doc;
 }

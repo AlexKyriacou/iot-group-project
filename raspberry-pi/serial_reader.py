@@ -20,8 +20,7 @@ class SerialReader:
             print(f"Error reading sensor data: {e}")
         return {}
 
-    def update_data_with_device_id_and_timestamp(self, data: dict[str, any]):
-        data["deviceId"] = self.config.device_id
+    def update_data_with_timestamp(self, data: dict[str, any]):
         data["timestamp"] = int(datetime.now().timestamp())
         return data
     

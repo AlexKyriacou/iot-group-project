@@ -22,9 +22,7 @@ bool FlameSensor::isDetected() {
 
 JsonDocument FlameSensor::getJsonData() {
   JsonDocument doc;
-  doc["deviceType"] = "flameSensor";
-  doc["data"]["flame"] = isDetected();
-  doc["data"]["flameIntensity"] = value();
+  doc["data"]["flame"] = value();
   flameDetected = false;  // Reset the flag after retrieving the JSON data
   return doc;
 }

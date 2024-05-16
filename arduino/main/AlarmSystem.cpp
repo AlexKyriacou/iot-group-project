@@ -59,11 +59,19 @@ void AlarmSystem::updateMotionLed() {
 void AlarmSystem::printSensorStatus() {
   unsigned long currentTime = millis();
   if (currentTime - lastPrintTime >= PRINT_INTERVAL) {
+    StaticJsonDocument<1024> combinedData;
+
     for (int i = 0; i < numSensors; i++) {
       JsonDocument sensorData = sensors[i]->getJsonData();
-      serializeJson(sensorData, Serial);
-      Serial.println();
+      // Merge sensorData into combinedData
+      for (JsonPair kv : sensorData["data"].as<JsonObject>()) {
+        combinedData[kv.key()] = kv.value();
+      }
     }
+
+    serializeJson(combinedData, Serial);
+    Serial.println();
+    
     lastPrintTime = currentTime;
   }
 }

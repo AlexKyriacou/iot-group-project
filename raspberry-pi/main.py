@@ -47,7 +47,7 @@ def handle_mqtt_data():
 
 def read_and_publish_sensor_data():
     sensor_data = serial_reader.read_sensor_data()
-    sensor_data = serial_reader.update_data_with_device_id_and_timestamp(sensor_data)
+    sensor_data = serial_reader.update_data_with_timestamp(sensor_data)
     serialized_data = json.dumps(sensor_data)
     print(f"Publishing sensor data: {sensor_data}")
     thingsboard_client.publish(f"v1/devices/me/telemetry", serialized_data)
@@ -78,7 +78,7 @@ if __name__ == "__main__":
         password=config.mqtt_password,
     )
     mosquitto_client = MQTTClient(
-        broker="20.70.77.206",
+        broker="13.70.145.157",
         port=config.mqtt_port,
         topics=["alarmSystem/command"],
         client_id=config.mqtt_client_id,
