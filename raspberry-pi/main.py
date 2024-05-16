@@ -78,7 +78,7 @@ if __name__ == "__main__":
         password=config.mqtt_password,
     )
     mosquitto_client = MQTTClient(
-        broker="localhost",
+        broker="20.70.77.206",
         port=config.mqtt_port,
         topics=["alarmSystem/command"],
         client_id=config.mqtt_client_id,

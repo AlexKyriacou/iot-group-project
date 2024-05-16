@@ -51,7 +51,6 @@ def handle_command_alarm(data):
     serializedAlarmObject = json.dumps(alarmObject)
     mqtt_client.publish("alarmSystem/command", serializedAlarmObject)
 
-
 def build_alarm_object(requestData):
     alarmObject = {}
     if "command" not in requestData:
@@ -62,6 +61,27 @@ def build_alarm_object(requestData):
     alarmObject["data"]["command"] = requestData["command"]
     return alarmObject
 
+@socketio.on("update_threshold")
+def handle_update_threshold(data):
+    """
+    Handle a command to update the threshold values for either gas, flame or us sensor
+
+    Args:
+        data (dict): The threshold data.
+    """
+    thresholdObject = build_threshold_object(data)
+    serializedThresholdObject = json.dumps(thresholdObject)
+    mqtt_client.publish("alarmSystem/command", serializedThresholdObject)
+
+def build_threshold_object(requestData):
+    thresholdObject = {}
+    if "command" not in requestData:
+        return None
+
+    thresholdObject["deviceType"] = "alarmSystem"
+    thresholdObject["data"] = {}
+    thresholdObject["data"]["command"] = requestData["command"]
+    return thresholdObject
 
 def emit_data(data):
     """

@@ -40,6 +40,19 @@
         border: none;
         cursor: pointer;
       }
+      
+      .threshold {
+        display: flex;
+        flex-direction: column;
+        margin-top: 20px;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .error {
+        color: red;
+        font-size: 12px;
+      }
     </style>
     <script>
       const socket = io.connect(
@@ -94,6 +107,26 @@
         };
         socket.emit("command_alarm", commandData);
       }
+      
+      function updateThreshold(sensorLabel, thresholdId, labelId) {
+        const thresholdInput = document.getElementById(thresholdId);
+        const errorElement = document.getElementById(`${thresholdId}Error`);
+        errorElement.textContent = '';
+
+        if (!thresholdInput.checkValidity()) {
+          errorElement.textContent = thresholdInput.validationMessage;
+          return;
+        }
+
+        const thresholdValue = thresholdInput.value;
+        document.getElementById(labelId).textContent = `Current ${sensorLabel}: ${thresholdValue}`;
+        
+        // Send the updated threshold value via WebSocket
+        const thresholdData = {
+          command: thresholdId + "/" + thresholdValue
+        };
+        socket.emit("update_threshold", thresholdData);
+      }
     </script>
   </head>
   <body>
@@ -105,5 +138,23 @@
       onclick="armDisarmAlarm()">
       Arm Alarm
     </button>
+    <div class="threshold">
+      <span id="gasCurrent">Current Gas Threshold: 0</span>
+      <input type="number" id="gasThreshold" name="gasThreshold" min="0" max="1023" />
+      <button onclick="updateThreshold('Gas Threshold','gasThreshold', 'gasCurrent')">Update Gas</button>
+      <div id="gasThresholdError" class="error"></div>
+    </div>
+    <div class="threshold">
+      <span id="flameCurrent">Current Flame Threshold: 0</span>
+      <input type="number" id="flameThreshold" name="flameThreshold" min="0" max="1023" />
+      <button onclick="updateThreshold('Flame Threshold', 'flameThreshold', 'flameCurrent')">Update Flame</button>
+      <div id="flameThresholdError" class="error"></div>
+    </div>
+    <div class="threshold">
+      <span id="distanceCurrent">Current Distance Threshold: 0</span>
+      <input type="number" id="distanceThreshold" name="distanceThreshold" min="0" />
+      <button onclick="updateThreshold('Distance Threshold', 'distanceThreshold', 'distanceCurrent')">Update Distance</button>
+      <div id="distanceThresholdError" class="error"></div>
+    </div>
   </body>
 </html>
