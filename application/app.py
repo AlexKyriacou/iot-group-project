@@ -81,6 +81,7 @@ def background_task():
     while True:
         data = mqtt_client.data
         if data:
+            print(f"Received data: {data}")
             emit_data(data)
             mqtt_client.data = None
         socketio.sleep(0.1)  # Small delay to avoid overwhelming the WebSocket
@@ -91,7 +92,7 @@ if __name__ == "__main__":
     mqtt_client = MQTTClient(
         broker=config.broker,
         port=config.port,
-        topics=["motionDetector/+/status", "ultraSonicSensor/+/status", "gasSensor/+/status", "flameSensor/+/status"],
+        topics=["v1/devices/me/telemetry"],
         client_id=config.client_id,
         username=config.username,
         password=config.password,
